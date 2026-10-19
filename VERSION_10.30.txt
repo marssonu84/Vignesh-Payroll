@@ -1,0 +1,96 @@
+Vighnesh Payroll Systems V10.30
+
+Deployment
+1. Back up the current site and database first.
+2. Upload over the existing web root. Keep the server's existing Database.config (not included here).
+3. Database.config.template holds placeholders only; never upload it as Database.config.
+4. Open Database Manager and run Test Connection before any schema action.
+5. Read TWO_STEP_LOGIN_README.txt, then test on a copy before enabling for admins.
+
+V10.24 changes (since the V10.23 upload)
+- Removed: live Database.config, runtime error log, local SQL setup folder, duplicate root Login.aspx.cs,
+  unused music files/scripts/handler, superseded V10.22 notes.
+- Default.aspx now matches index.html. sitemap.xml lists Brand-Architecture and Visitor-Demo.
+- NEW: optional two-step sign-in (Super User registers it for self and others; App_Code/Totp.cs, TwoStepSetup.aspx,
+  Login changes, Two-Step menu link in Site.Master, Web.config key TwoStepEnabled).
+
+V10.25 change (entity Pending lock)
+- Login is refused while the client's entity (Tenants.ApprovalStatus) is Pending, Rejected or otherwise not Active.
+- The check now runs after the password is verified (no status leak to strangers) and before the user-active check,
+  so a newly registered entity sees "pending approval" instead of "user account is inactive".
+- An already signed-in session ends on its next request if the entity stops being Active (Auth.IsLoggedIn, cached per request).
+- Login.aspx?pending=1 (sent after Signup) now shows a pending-approval message.
+- Super User (no entity) is never blocked. Note: there is no separate subscription/payment status in the database;
+  "Pending" here means the entity registration awaiting Super User approval.
+
+V10.26 change (Set to Pending / Suspend)
+- Entities page (Super User): Status column is now colour-coded (Active green, Pending amber, Suspended red, Rejected grey).
+- New buttons on an Active entity: "Set to Pending" and "Suspend" (both ask for confirmation). Login is refused for all users
+  of that entity and signed-in users are logged out on their next request. No users or data are changed or deleted.
+- New button "Reactivate" on a Suspended entity; "Approve" still handles Pending/Rejected entities.
+- Status values: Active, Pending, Suspended, Rejected (stored in the existing Tenants.ApprovalStatus column - no database change).
+- Every change is written to OrganisationAudit.
+
+V10.27 change (Backup / Export)
+- Backup page is now Super User only (Entity Admins could open it before). Menu link renamed "Backup / Export".
+- NEW: "Download Entity Data (ZIP)" - one entity's data as CSV files (entity, branches, users without passwords, permissions,
+  employees, attendance, payroll, loans) plus a README with row counts. Plain SELECTs only, so it works on shared hosting.
+  Written to the SystemAudit log. Contains personal/bank details: store securely.
+- Server-side "Create Backup Now" kept, with a clear message when the host does not allow it.
+- Page explains full backup/restore via the host control panel or SSMS (.bacpac / Generate Scripts). Restore is not done in-app.
+
+V10.27 change (entity data export)
+- Backup / Export page is Super User only; new per-entity CSV export (ZIP). QR code on the two-step setup page.
+
+Release note
+- Labels only: package renamed to V10.27 and the QR script cache version updated. No logic changed.
+
+V10.28 change (full database script)
+- Backup / Export page: new 'Full database script (.sql)' download (App_Code/FullDbScriptService.cs). Uses only catalog and SELECT queries, so it works where the host's Export Dump or BACKUP DATABASE is unavailable. Super User only, audit-logged. Last line of the file must say COMPLETE.
+
+V10.29 fix (full database script download)
+- The V10.28 download returned the page HTML instead of the script on the live server. The script is now delivered by FullDbScript.ashx as a ZIP (one-time token, Super User only), so no page HTML can be mixed in.
+
+V10.29.1 (diagnostics)
+- If the full database script cannot be created, the page now shows which step failed and the reason (Super User only). Failures inside the file also name the step or table.
+
+V10.29.2 (Backup page wording only)
+- Backup & Restore page reorganised into A. Full backup (recommended), B. One client's data (copy only), C. How to restore,
+  with the rarely useful server-side backup moved under "Advanced". Page title and headings renamed. No logic changed.
+
+V10.29.3 (Full database script download fix)
+- FullDbScript.ashx handler now calls CompleteRequest() after writing the ZIP, so ASP.NET doesn't
+  send extra content that corrupts the file.
+- Mobile browsers that auto-retry failed downloads can now use ?t=retry to get a new token instead
+  of being rejected. The page hints at this.
+
+V10.30 (checked 10.29.3, then speed + fixes)
+- FIX: full backup download token is now valid for 10 minutes and reusable (phone retries work). The ?t=retry shortcut in
+  10.29.3 is removed: it bypassed the token check and, on retry, silently dropped the sign-in data from the backup.
+- FIX: old "section 1 / section 3" wording in Backup & Restore messages updated; false "retry link" hint removed.
+- SPEED: logo shrunk from 901 KB to about 43 KB (same look); Google ads script removed from Login and logged-in pages
+  (no ad units existed there); 7-day browser cache for /Content and response compression (Web.config, clearly marked);
+  ?v=10.30 added to site.css and logo links; entity name/type cached 2 minutes per session (fewer database calls per page).
+
+V10.31 (attendance statement format + payroll alignment)
+- Attendance > Monthly Attendance Summary now shows the printable "Staff Salary Disbursement" statement:
+  S.No | Name of the Staff | Lates | Leaves | Permissions | Amount to be Deducted /Days Present.
+  Entity name/address/phone come from the entity record; the disbursement date (default: 4th of the month after the
+  attendance month, editable) prints with its weekday; one block per branch, S.No restarts per block; zero = blank cell.
+  New "Print Statement" button (prints only the statement). The old detailed columns moved under "Detailed attendance breakdown".
+- RULE CHANGE: Leaves = Casual Leave + Absent + Half Days. Leaves + (Lates / 3, whole groups) + (Permissions / 2 pairs x 0.5)
+  are added and the first 1 day each month is free; only the balance is deducted. Before, Absent days were deducted in full
+  (no free day). Months finalised under V10.30 keep their old snapshot until Attendance is re-finalised.
+- Payroll grid now shows Lates, Leaves, Permissions and Amount to be Deducted (days) from the finalised attendance snapshot
+  (read-only, also for saved payroll). Days in Month auto-fills from the salary month on Load.
+- No database change.
+
+V10.31 change (Staff Salary Disbursement Excel statement)
+- NEW App_Code/StatementExcelService.cs: builds the statement as .xlsx in the same layout as the paper sheet
+  (organisation heading, disbursement date line, branch heading, S.No / Name / Lates / Leaves / Permissions /
+  Amount to be Deducted, footnote). One worksheet per branch. Column F is a live Excel formula:
+  =MAX(0,Leaves+INT(Lates/3)+INT(Permissions/2)*0.5-1); zero shows blank.
+- Attendance page: new button "Download Statement (Excel)" (uses the month, branch and disbursement date on screen).
+- Payroll page: new button "Download Salary Statement (Excel)" (uses the finalised Attendance snapshot, so it always
+  matches what Payroll deducts; disbursement date = 4th of the following month).
+- No database change. No change to existing calculations.

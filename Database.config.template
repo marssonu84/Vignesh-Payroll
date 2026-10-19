@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Vighnesh Payroll Systems - Database.config template (V13.4)
+
+  Three supported database configurations (choose in HybridSetup.aspx):
+
+  Cloud A - somee.com
+    Data Source=empsalary.mssql.somee.com;Initial Catalog=empsalary;
+    User ID=<login>;Password=<password>;Persist Security Info=False;
+    Packet Size=4096;TrustServerCertificate=True;
+
+  Cloud B - bsite.net
+    Server=sql.bsite.net\MSSQL2016;Database=empsalary_;
+    User ID=empsalary_;Password=<password>;TrustServerCertificate=True;
+
+  Local SQL Server (client's SSMS server)
+    Windows login : Data Source=<SERVER\INSTANCE>;Initial Catalog=<DB>;
+                    Integrated Security=True;Encrypt=True;TrustServerCertificate=True;
+    SQL login     : Data Source=<SERVER\INSTANCE>;Initial Catalog=<DB>;
+                    User ID=<login>;Password=<password>;Encrypt=True;TrustServerCertificate=True;
+
+  After Apply in HybridSetup the value is stored as ENC:... (DPAPI, LocalMachine).
+  Never ship a Database.config that contains live passwords.
+  Do not add "Command Timeout" or "Pooling=False" - SqlClient rejects the first, the second hurts speed.
+-->
+<connectionStrings>
+  <add name="PayrollDb"
+       connectionString="Server=YOUR_SQL_SERVER;Database=YOUR_DATABASE;User ID=YOUR_DB_USER;Password=YOUR_DB_PASSWORD;TrustServerCertificate=True;"
+       providerName="System.Data.SqlClient" />
+</connectionStrings>

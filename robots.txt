@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Disallow: /App_Data/
+Sitemap: https://empsalary.bsite.net/sitemap.xml

@@ -1,0 +1,12 @@
+V13.4 - Three database configurations
+
+- HybridSetup.aspx now offers: Cloud A (somee.com), Cloud B (bsite.net), Local SQL Server (client SSMS server).
+- Local: server name as typed in SSMS; Windows Authentication or SQL login; optional "create database".
+- Passwords removed from source code and package. Passwords are typed on the page.
+- Connection test must pass before saving unless "Save even if test fails" is ticked.
+- Saved encrypted (DPAPI LocalMachine). Re-apply when moving to another server.
+- Database.config ships as a placeholder. First-time setup is allowed from localhost only; otherwise edit the file once by hand.
+- HybridSetup requires a full administrator (organisation admins are refused).
+- Restored V13.1: UAN / ESI optional (Employees.aspx.cs + import template).
+- Removed Connections.sqlconn (SSMS leftover).
+- Never add "Command Timeout" or "Pooling=False" to the connection string.

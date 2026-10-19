@@ -1,0 +1,14 @@
+V13.1 – UAN & ESI numbers optional
+
+CHANGE:
+- UAN No is no longer required when PF Member is selected (UI + Excel import).
+- ESI No is no longer required when ESI Member is selected (UI + Excel import).
+- Employee_Data_Upload_Template.xlsx:
+  - Column headers: "UAN No (Optional)" and "ESI No (Optional)"
+  - Instructions sheet updated to state both fields are optional
+- NormalizeEmployeeHeader now strips "(Optional)" suffixes so import still maps correctly
+- Database columns UANNo / ESINo were already nullable; no schema change needed
+
+Files changed:
+- Employees.aspx.cs
+- Employee_Data_Upload_Template.xlsx

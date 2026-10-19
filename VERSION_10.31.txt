@@ -1,0 +1,8 @@
+
+V10.31 change (Attendance Import Format - Breaking Change)
+- BREAKING: Attendance Import format changed from daily punch records (Employee ID, Date, IN Time, OUT Time)
+  to monthly attendance summary (Name of the Staff, Lates, Leaves, Permissions, Deduction Days).
+- NEW: Download template matches Salary Disbursement Report format (simpler for educational institutions).
+- Import now looks up employees by Name instead of Employee ID.
+- Imports directly into AttendanceMonthlyEmployeeSummary, replacing the old daily punch import.
+- Old format no longer supported. Use the new template from Attendance > Download Template.

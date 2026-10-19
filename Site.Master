@@ -1,0 +1,99 @@
+<%@ Master Language="C#" %>
+
+<!DOCTYPE html>
+<html>
+<head runat="server">
+    <title>
+        <asp:ContentPlaceHolder ID="PageTitleSlot" runat="server" />
+        - Vighnesh Payroll Systems
+    </title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Google AdSense: publisher ca-pub-8404356823010331 -->
+    <link href="Content/site.css?v=10.30" rel="stylesheet" />
+</head>
+
+<body>
+
+<form id="mainForm" runat="server">
+
+    <header class="topbar">
+        <div class="topbar-inner">
+            <div class="brand-lockup">
+                <strong>Vighnesh Payroll Systems</strong>
+                <span>Software Solutions • Payroll &amp; Workforce Management</span>
+                <small>Entity: <%= Server.HtmlEncode(PayrollWebApp.Auth.CurrentOrganizationName()) %></small>
+            </div>
+
+            <div class="user-info">
+                <% 
+                    string displayUser = "";
+                    try
+                    {
+                        displayUser = PayrollWebApp.Auth.CurrentUserName();
+                    }
+                    catch
+                    {
+                        displayUser = "";
+                    }
+                %>
+                <% if (!String.IsNullOrWhiteSpace(displayUser)) { %>
+                    Welcome, <strong><%= Server.HtmlEncode(displayUser) %></strong>
+                <% } %>
+            </div>
+
+            <nav>
+                <% if (PayrollWebApp.Auth.HasPermission("DashboardView")) { %>
+                    <a href="Dashboard.aspx">Dashboard</a>
+                <% } %>
+
+                <% if (PayrollWebApp.Auth.HasPermission("EmployeesView")) { %>
+                    <a href="Employees.aspx">Employees</a>
+                <% } %>
+
+                <% if (PayrollWebApp.Auth.HasPermission("LoansView")) { %>
+                    <a href="Loans.aspx">Loans</a>
+                <% } %>
+
+                <% if (PayrollWebApp.Auth.HasPermission("PayrollView")) { %>
+                    <a href="Payroll.aspx">Payroll</a>
+                <% } %>
+
+                <% if (PayrollWebApp.Auth.HasPermission("AttendanceView")) { %>
+                    <a href="Attendance.aspx">Attendance</a>
+                <% } %>
+
+                <% if (PayrollWebApp.Auth.HasPermission("ReportsView")) { %>
+                    <a href="Reports.aspx">Reports</a>
+                <% } %>
+
+                <% if (PayrollWebApp.Auth.IsAdmin()) { %>
+                    <a href="Register.aspx">User Management</a>
+                    <a href="HybridSetup.aspx">Database Setup</a>
+                    <a href="LicenseAdmin.aspx">License</a>
+                    <a href="BackupRestore.aspx">Backup &amp; Restore</a>
+                    <a href="DatabaseManager.aspx">Database</a>
+                    <% if (PayrollWebApp.Auth.IsSuperUser()) { %><a href="Organizations.aspx">Entities</a><% } %>
+                <% } %>
+
+                <% if (PayrollWebApp.Auth.IsAdmin() && PayrollWebApp.Totp.FeatureEnabled()) { %>
+                    <a href="TwoStepSetup.aspx">Two-Step</a>
+                <% } %>
+
+                <a href="Login.aspx">Logout</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="page-content">
+        <asp:ContentPlaceHolder ID="PageBodySlot" runat="server" />
+    </main>
+
+</form>
+
+    <script src="Content/visit-music-continuous.js?v=10.6.3"></script>
+
+</body>
+</html>
+

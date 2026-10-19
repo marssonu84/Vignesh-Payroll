@@ -1,0 +1,31 @@
+V13 – Import result pages
+
+NEW:
+- After Employees Excel import → EmployeesImportResult.aspx
+- After Attendance Excel import → AttendanceImportResult.aspx
+- After Payroll statement upload → PayrollImportResult.aspx
+
+STABILITY FIX (V13.1 package check):
+- EmployeesImportResult no longer selects non-existent Department column
+- AttendanceImportResult joins Employees for names (summary table has EmployeeID only)
+- PayrollImportResult uses Designation instead of Department
+
+V13.2 / V13.2.1 – Package model (historical)
+- HybridSetup introduced; cloud host moved to somee.com
+
+V13.3 – Cloud-only package model (no local database configuration)
+- HybridSetup.aspx offers TWO cloud hosts only:
+  • Cloud A – somee.com (present / primary package database)
+    Data Source=empsalary.mssql.somee.com; Initial Catalog=empsalary;
+    User ID=marssonu84_SQLLogin_2; Packet Size=4096; Persist Security Info=False
+  • Cloud B – bsite.net (alternate shared hosting)
+    Server=sql.bsite.net\MSSQL2016; Database=empsalary_; User ID=empsalary_
+- Local / On-Premise option removed entirely (no ACCOUNTS\ACCOUNTS, no Integrated Security path)
+- Database.config ships with Cloud A (somee.com) as the default
+- Connection is saved encrypted (DPAPI LocalMachine) via SecureConfig when applied
+- Cloud apply tolerates offline test failures (useful when packaging on a developer PC)
+
+Deploy notes:
+- Keep server Database.config; do not overwrite with package credentials file if host already works
+- Remove or empty App_Data/ErrorLogs/runtime-errors.log before public distribution
+- To switch between Cloud A and Cloud B: open HybridSetup.aspx as administrator and Apply

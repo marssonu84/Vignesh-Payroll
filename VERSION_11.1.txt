@@ -1,0 +1,15 @@
+V11.1 Attendance Import Fix
+
+FIXED:
+- Fixed the mismatch between the V11 Attendance page and its monthly import format.
+- Monthly imports now accept: Name of the Staff, Lates, Leaves, Permissions.
+- Employee ID is no longer required for the monthly summary format.
+- Excel reader now detects the actual header row when title/organisation/month rows appear above it.
+- Existing daily biometric punch format with Employee ID and Date remains supported.
+- Monthly imported values are saved to AttendanceMonthlyEmployeeSummary and are used by the Attendance summary/finalisation flow.
+- Added a Download Monthly Import Template button.
+- Duplicate employee names are rejected with a clear message to avoid importing to the wrong employee.
+
+RULES:
+- Leaves + floor(Lates/3) + floor(Permissions/2)*0.5 are used for leave equivalent.
+- First 1 day is free each month; remaining balance becomes Deduction Days.
